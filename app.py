@@ -10,6 +10,11 @@ Deploy free on Streamlit Cloud:
 """
 
 import math, zipfile, tempfile, shutil, io
+try:
+    import rarfile
+    RAR_SUPPORTED = True
+except ImportError:
+    RAR_SUPPORTED = False
 from pathlib import Path
 
 import streamlit as st
@@ -113,6 +118,11 @@ def load_shp(uploaded_file):
         if name.lower().endswith(".zip"):
             with zipfile.ZipFile(fpath) as z:
                 z.extractall(tmp)
+        elif name.lower().endswith(".rar"):
+            if not RAR_SUPPORTED:
+                raise ImportError("rarfile غير مثبت. أضف 'rarfile' لـ requirements.txt")
+            with rarfile.RarFile(fpath) as rf:
+                rf.extractall(tmp)
         # ابحث عن .shp
         shps = list(Path(tmp).rglob("*.shp"))
         if not shps:
@@ -250,7 +260,7 @@ def draw_map(ax, gdf, font_size, line_color, label_color, lw,
             ax.scatter(vxs, vys, color="#f59e0b", s=50,
                        edgecolors="#92400e", linewidths=1.2,
                        zorder=60, clip_on=False)
-            for idx,(vx,vy,*_) in enumerate(vertices, start=1):
+            for idx,(vx,vy) in enumerate(vertices, start=1):
                 ax.text(vx+off_x, vy+off_y, str(idx),
                         fontsize=max(font_size,7), color="white",
                         fontweight="bold", ha="left", va="bottom",
@@ -370,8 +380,8 @@ def build_figure(gdf, opts):
 with st.sidebar:
     st.markdown("## 🗂️ Open File")
     uploaded = st.file_uploader(
-        "Upload SHP or ZIP",
-        type=["shp","zip"],
+        "Upload SHP or ZIP or RAR",
+        type=["shp","zip","rar"],
         help="Upload a .shp file or a .zip containing the shapefile components"
     )
 
