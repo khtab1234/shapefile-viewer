@@ -12,6 +12,7 @@ Deploy free on Streamlit Cloud:
 import math, zipfile, tempfile, shutil, io
 try:
     import rarfile
+    rarfile.UNRAR_TOOL = "unrar"   # unrar-free binary name
     RAR_SUPPORTED = True
 except ImportError:
     RAR_SUPPORTED = False
