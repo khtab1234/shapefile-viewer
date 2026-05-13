@@ -250,7 +250,7 @@ def draw_map(ax, gdf, font_size, line_color, label_color, lw,
             ax.scatter(vxs, vys, color="#f59e0b", s=50,
                        edgecolors="#92400e", linewidths=1.2,
                        zorder=60, clip_on=False)
-            for idx,(vx,vy) in enumerate(vertices, start=1):
+            for idx,(vx,vy,*_) in enumerate(vertices, start=1):
                 ax.text(vx+off_x, vy+off_y, str(idx),
                         fontsize=max(font_size,7), color="white",
                         fontweight="bold", ha="left", va="bottom",
